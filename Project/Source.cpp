@@ -2,7 +2,7 @@
 using namespace std;
 
 int main() {
-	int a; /// new comment
+	int a = 3; /// new comment
 	int b;
 	int c;
 	int d;
