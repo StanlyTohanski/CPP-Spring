@@ -4,7 +4,7 @@ using namespace std;
 int main() {
 	int a = 3; /// new comment
 	int b;
-	int c;
+	int c; /// web comment
 	int d;
 	c = 5;
 
