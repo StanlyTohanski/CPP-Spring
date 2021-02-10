@@ -4,7 +4,7 @@ using namespace std;
 void g() {}
 
 int main() {
-	int error;
+	cout << "Hello";
 	int b;
 	int c; /// web comment
 //<<<<<<< HEAD
