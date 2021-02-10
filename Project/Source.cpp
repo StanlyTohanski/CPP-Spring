@@ -6,7 +6,7 @@ int main() {
 	int b;
 	int c; /// web comment
 //<<<<<<< HEAD
-	int d;   
+	int d;   /// new master comment
 	int branch;
 //=======
 	d = 5;  // master comment
