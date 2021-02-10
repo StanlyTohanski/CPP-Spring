@@ -14,6 +14,6 @@ int main() {
 	d = 5;  // master comment
 //>>>>>>> master
 	c = 5;
-
+	int new_branch;
 	return 0;
 }
