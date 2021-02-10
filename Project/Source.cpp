@@ -9,7 +9,7 @@ int main() {
 	int d;   
 	int branch;
 //=======
-	int d;  // master comment
+	d = 5;  // master comment
 //>>>>>>> master
 	c = 5;
 
