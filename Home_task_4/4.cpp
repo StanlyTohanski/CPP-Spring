@@ -58,7 +58,8 @@ int main()
 		if (isPrime(i))
 			std::cout << "простое " << i << std::endl;
 	}
-
+	
+	
 	std::for_each(p1.begin(), p1.end(), [](int& n) { n*=n; }); // возводим в квадраты
 
 	std::vector<int> p2;
@@ -67,16 +68,13 @@ int main()
 	}
 
 	int sum = std::accumulate(p1.begin(), p1.end(), 0); // сумма чисел во втором
+	
+	std::for_each_n(p2.begin(), 3, [](auto& n){ n = 1; }); // меняем треть элементов на 1
 
-	for (size_t i = 0; i < int(p2.size()/3); i++){ // меняем треть элементов на 1
-		p2[i] = 1;
-	}
 
 
 	std::vector<int> p3 = p1; // создаём третий массив
-	for (size_t i = 0; i < p1.size(); i++){
-		p3[i] -= p2[i];
-	}
+	std::transform(p3.begin(), p3.end(), p2.begin(), [&p2](auto& n3, auto& n2) { return n3 - n2; });
 
 	std::for_each(p3.begin(), p3.end(), [](int& n) { if (n < 0) n = 0; }); // заменяем отрицательные на нули
 
