@@ -24,15 +24,13 @@ int main()
 	setlocale(LC_ALL, "ru");
 
 	int n = 10;
-    std::vector<int> p1;
-	for (size_t i = 0; i < n; i++){ // создаём последовательность
-		p1.push_back((rand() % 10) + 1);
-	}
+    	std::vector<int> p1 (n);
+	std::generate(p1.begin(), p1.end(), [n = 0]() mutable { return n++; }); // создаём последовательность
+	std::cout << "p1 \n";
 
-	//std::cout << "введите ещё три числа \n";
-	for (size_t i = 0; i < 3; i++) { // +3
-		p1.push_back([]() {int a;  std::cin >> a; return a; }());
-	}
+	std::istream_iterator<int> intp1Read(std::cin); // добавляем в начало несколько элементов
+	copy(intp1Read, std::istream_iterator<int>(), p1.begin());
+	std::cin.clear();
 
 	std::random_shuffle(p1.begin(), p1.end()); // перемешаем
 
@@ -68,8 +66,7 @@ int main()
 		p2.push_back((rand() % 10) + 1);
 	}
 
-	int b = 0;
-	std::for_each(p2.begin(), p2.end(), [&b](int &n) {b += n; }); // сумма чисел во втором
+	int sum = std::accumulate(p1.begin(), p1.end(), 0); // сумма чисел во втором
 
 	for (size_t i = 0; i < int(p2.size()/3); i++){ // меняем треть элементов на 1
 		p2[i] = 1;
