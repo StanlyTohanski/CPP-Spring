@@ -29,15 +29,14 @@ int main()
 		p1.push_back((rand() % 10) + 1);
 	}
 
-	std::cout << "введите ещё три числа \n";
+	//std::cout << "введите ещё три числа \n";
 	for (size_t i = 0; i < 3; i++) { // +3
-		p1.push_back((rand() % 10) + 1);
+		p1.push_back([]() {int a;  std::cin >> a; return a; }());
 	}
 
 	std::random_shuffle(p1.begin(), p1.end()); // перемешаем
 
 	//std::sort(p1.begin(), p1.end());  // сортируем
-	Printvc(p1);
 
 	std::vector<int> p_temp;
 	std::set <int> s_temp;
@@ -48,13 +47,11 @@ int main()
 	}
 	p1 = p_temp;
 	//p1.erase(std::unique(p1.begin(), p1.end()), p1.end()); // убираем соседние дубликаты, потому что не помню, можно ли без сортировки
-	Printvc(p1);
 
-	int k = 0;
-	for (auto i : p1) { // количество нечётных
-		if (i % 2 == 1)
-			k++;
-	};
+	int num = std::count_if(p1.begin(), p1.end(), [](int &a) {return (a % 2 == 1); }); // количество нечётных
+
+
+	/*auto [min, max] = std::minmax_element(begin(p1), end(p1));*/
 
 	std::vector<int>::iterator min = std::min_element(p1.begin(), p1.end()); // почему-то думал, что должен возвращаться элемент, а не указатель
 	std::vector<int>::iterator max = std::max_element(p1.begin(), p1.end()); // максимальный
