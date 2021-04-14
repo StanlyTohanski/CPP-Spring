@@ -1,0 +1,6 @@
+parallel_sort	1014 milliseconds
+sequetnial_sort	259 milliseconds
+parallel_fill	27 milliseconds
+sequetnial_fill	28 milliseconds
+parallel_replace	870 milliseconds
+sequetnial_replace	36 milliseconds
