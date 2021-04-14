@@ -1,4 +1,3 @@
-
 #include <future>
 #include <cmath>
 #include <thread>
@@ -6,7 +5,9 @@
 #include <random>
 #include <exception>
 #include <iostream>
-
+#include <string>
+#include <fstream>
+#include <filesystem>
 #include <algorithm>
 #include <iostream>
 #include <numeric>
@@ -26,10 +27,7 @@ public:
 		v.push_back(clock_t::now());
 		std::cout << "Continue" << std::endl;
 	}
-
-	Timer() : m_begin(clock_t::now()) {}
-	~Timer()
-	{
+	auto time() {
 		auto end = clock_t::now();
 		auto temp = end;
 		for (size_t i = 0; i < size(v); i += 2) { //вычитаем перерывы
@@ -40,8 +38,24 @@ public:
 			end -= v[i + 1] - v[i];
 
 		}
-		std::cout << "milliseconds	" << std::chrono::duration_cast <
-			std::chrono::milliseconds> (end - m_begin).count() << std::endl;
+		return std::chrono::duration_cast <
+			std::chrono::milliseconds> (end - m_begin).count();
+	}
+
+	Timer() : m_begin(clock_t::now()) {}
+	~Timer()
+	{
+		//auto end = clock_t::now();
+		//auto temp = end;
+		//for (size_t i = 0; i < size(v); i += 2) { //вычитаем перерывы
+		//	if (i + 1 > size(v)) { // можно отключить таймер на паузе
+		//		end -= temp - v[i];
+		//		break;
+		//	}
+		//	end -= v[i + 1] - v[i];
+		//}
+		//std::cout << "milliseconds	" << std::chrono::duration_cast <
+		//	std::chrono::milliseconds> (end - m_begin).count() << std::endl;
 	}
 
 private:
@@ -77,27 +91,32 @@ int main(int argc, char** argv)
 {
 	setlocale(LC_ALL, "Rus");
 
-	int n;
-	std::cout << "введите количество потоков" << std::endl;
-	std::cin >> n;
+	
+	std::ofstream fout("D:\\Alex\\FOPF\\Прога\\C++\\Семинар7\\output.txt");
+	//int n;
+	//std::cout << "введите количество потоков" << std::endl;
+	//std::cin >> n;
 
-	std::vector < int > v(100000);
+	std::vector < int > v(10e6);
 
 	std::iota(v.begin(), v.end(), 1);
+	int a = std::thread::hardware_concurrency();
+	std::cout << a;
 	/*{
 		Timer t;
 		std::cout << parallel_accumulate(v.begin(), v.end(), 0, n) << std::endl;
 	}*/
-	for (size_t i = 0; i < 30; i++)
+	for (size_t i = 1; i < 10; i++)
 	{
-		std::cout << "Number of threads = " << i << std::endl;
+		std::cout << "Number of threads = " << i << "\t";
 		Timer t;
-		std::cout << parallel_accumulate(v.begin(), v.end(), 0, i) << std::endl;
-		
+		parallel_accumulate(v.begin(), v.end(), 0, i);
+		auto a = t.time();
+		std::cout << a << std::endl;
+		fout << i <<"\t" << a << std::endl;
 	}
 
 	system("pause");
 
 	return EXIT_SUCCESS;
 }
-
