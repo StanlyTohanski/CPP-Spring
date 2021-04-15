@@ -62,7 +62,32 @@ private:
 	time_point_t m_begin;
 	std::vector <time_point_t> v; // вектор точек остановок и включений
 };
+template<typename Iterator, typename Func>
+void parallel_for_each(Iterator first, Iterator last, Func f)
+{
+	ptrdiff_t const range_length = last - first;
+	if (!range_length)
+		return;
+	if (range_length == 1)
+	{
+		f(*first);
+		return;
+	}
 
+	Iterator const mid = first + (range_length / 2);
+
+	std::future<void> bgtask = std::async(&parallel_for_each<Iterator, Func>, first, mid, f);
+	try
+	{
+		parallel_for_each(mid, last, f);
+	}
+	catch (...)
+	{
+		bgtask.wait();
+		throw;
+	}
+	bgtask.get();
+}
 
 
 int main(int argc, char** argv)
@@ -76,38 +101,28 @@ int main(int argc, char** argv)
 		v1[i] = v2[2] = rand() % 100;
 	}
 
+
 	{
+		std::vector<int> xvalues(10007, 1), yvalues(10007, 1);
+		
 		Timer t;
-		std::sort(std::execution::par_unseq, v1.begin(), v1.end()); //parallel_sort
+		int r1 = std::inner_product(xvalues.begin(), xvalues.end(), yvalues.begin(), 0); // inner_product
 		auto a = t.time();
-		std::cout << "parallel_sort" << "\t" << a << std::endl;
-		fout << "parallel_sort" << "\t" << a << std::endl;
+		std::cout << "inner_product" << "\t" << a << std::endl;
+		fout << "inner_product" << "\t" << a << std::endl;
 	}
+
 	{
+		std::vector<int> xvalues(10007, 1), yvalues(10007, 1); 
 		Timer t;
-		std::sort(v2.begin(), v2.end()); // sequetnial_sort
+		int result = std::transform_reduce( // transform_reduce
+			std::execution::par,
+			xvalues.begin(), xvalues.end(),
+			yvalues.begin(), 0
+		);
 		auto a = t.time();
-		std::cout << "sequetnial_sort" << "\t" << a << std::endl;
-		fout << "sequetnial_sort" << "\t" << a << std::endl;
-	}
-	for (size_t i = 0; i < 10e6; i++)
-	{
-		v1.push_back(rand() % 100);
-	}
-	v2 = v1;
-	{
-		Timer t;
-		std::fill(std::execution::par_unseq, v2.begin(), v2.end(), -1); // parallel_fill
-		auto a = t.time();
-		std::cout << "parallel_fill" << "\t" << a << std::endl;
-		fout << "parallel_fill" << "\t" << a << std::endl;
-	}
-	{
-		Timer t;
-		std::fill(v1.begin(), v1.end(), -1);
-		auto a = t.time();
-		std::cout << "sequetnial_fill" << "\t" << a << std::endl; // sequetnial_fill
-		fout << "sequetnial_fill" << "\t" << a << std::endl;
+		std::cout << "transform_reduce" << "\t" << a << std::endl; 
+		fout << "transform_reduce" << "\t" << a << std::endl;
 	}
 	
 
@@ -118,17 +133,32 @@ int main(int argc, char** argv)
 	
 	{
 		Timer t;
-		std::replace(std::execution::par_unseq, v1.begin(), v1.end(), 8, 88); // parallel_replace
+		std::inclusive_scan(v1.begin(), v1.end(), std::multiplies<>{});	 // inclusive_scan
 		auto a = t.time();
-		std::cout << "parallel_replace" << "\t" << a << std::endl;
-		fout << "parallel_replace" << "\t" << a << std::endl;
+		std::cout << "inclusive_scan" << "\t" << a << std::endl;
+		fout << "inclusive_scan" << "\t" << a << std::endl;
 	}
 	{
 		Timer t;
-		std::fill(v2.begin(), v2.end(), -1); // sequetnial_replace
+		std::partial_sum(v2.begin(), v2.end(), v2.begin(), std::multiplies<int>()); // partial_sum
 		auto a = t.time();
-		std::cout << "sequetnial_replace" << "\t" << a << std::endl;
-		fout << "sequetnial_replace" << "\t" << a << std::endl;
+		std::cout << "partial_sum" << "\t" << a << std::endl;
+		fout << "partial_sum" << "\t" << a << std::endl;
+	}
+
+	{
+		Timer t;
+		parallel_for_each(std::begin(v1), std::end(v1), [](auto& i) { i = (i / 2); }); // parallel_for_each
+		auto a = t.time();
+		std::cout << "parallel_for_each" << "\t" << a << std::endl;
+		fout << "parallel_for_each" << "\t" << a << std::endl;
+	}
+	{
+		Timer t;
+		std::for_each(std::begin(v2), std::end(v2), [](auto& i) { i = (i / 2); }); // sequential_for_each
+		auto a = t.time();
+		std::cout << "sequential_for_each" << "\t" << a << std::endl;
+		fout << "sequential_for_each" << "\t" << a << std::endl;
 	}
 
 	system("pause");
