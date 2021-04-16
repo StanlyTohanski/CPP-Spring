@@ -140,7 +140,7 @@ int main(int argc, char** argv)
 		fout << "sequential_for_each" << "\t" << a << std::endl;
 	}
 
-	std::vector < int > v11(10e2), v22(10e2);
+	std::vector < int > v11(10e6), v22(10e6);
 
 	for (size_t i = 0; i < v11.size(); i++)
 	{
@@ -148,21 +148,19 @@ int main(int argc, char** argv)
 	}
 	{
 		Timer t;
-		std::cout << "inclusive sum: ";
-		std::inclusive_scan(v11.begin(), v11.end(),
-			std::ostream_iterator<int>(std::cout, " "));	 // inclusive_scan
+		std::inclusive_scan(v11.begin(), v11.end(), v22.begin());	 // inclusive_scan
 		auto a = t.time();
-		std::cout << "\n inclusive_scan" << "\t" << a << std::endl;
-		fout << "\n inclusive_scan" << "\t" << a << std::endl;
+		std::cout << std::endl;
+		std::cout << "inclusive_scan" << "\t" << a << std::endl;
+		fout << "inclusive_scan" << "\t" << a << std::endl;
 	}
 	{
 		Timer t;
-		std::cout << "partial_sum: ";
-		std::partial_sum(v22.begin(), v22.end(),
-			std::ostream_iterator<int>(std::cout, " ")); // partial_sum
+		std::partial_sum(v11.begin(), v11.end(), v22.begin()); // partial_sum
 		auto a = t.time();
-		std::cout << "\n partial_sum" << "\t" << a << std::endl;
-		fout << "\n partial_sum" << "\t" << a << std::endl;
+		std::cout << std::endl;
+		std::cout << "partial_sum" << "\t" << a << std::endl;
+		fout << "partial_sum" << "\t" << a << std::endl;
 	}
 
 	system("pause");
