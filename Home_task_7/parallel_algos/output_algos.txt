@@ -1,0 +1,8 @@
+inner_product	159
+transform_reduce	127
+parallel_for_each	625
+sequential_for_each	0
+
+ inclusive_scan	991
+
+ partial_sum	1107
