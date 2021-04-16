@@ -94,17 +94,13 @@ int main(int argc, char** argv)
 {
 	setlocale(LC_ALL, "Rus");
 	std::ofstream fout("D:\\Alex\\FOPF\\Прога\\C++\\Семинар7\\output_algos.txt"); // to write in file
-	std::vector < int > v1(10e5), v2(10e5);
 
-	for (size_t i = 0; i < v1.size(); i++)
+	std::vector<int> xvalues(10e7, 1), yvalues(10e7, 1);
+	for (size_t i = 0; i < xvalues.size(); i++)
 	{
-		v1[i] = v2[2] = rand() % 100;
+		xvalues[i] = yvalues[2] = rand() % 100;
 	}
-
-
 	{
-		std::vector<int> xvalues(10007, 1), yvalues(10007, 1);
-		
 		Timer t;
 		int r1 = std::inner_product(xvalues.begin(), xvalues.end(), yvalues.begin(), 0); // inner_product
 		auto a = t.time();
@@ -113,7 +109,6 @@ int main(int argc, char** argv)
 	}
 
 	{
-		std::vector<int> xvalues(10007, 1), yvalues(10007, 1); 
 		Timer t;
 		int result = std::transform_reduce( // transform_reduce
 			std::execution::par,
@@ -124,28 +119,12 @@ int main(int argc, char** argv)
 		std::cout << "transform_reduce" << "\t" << a << std::endl; 
 		fout << "transform_reduce" << "\t" << a << std::endl;
 	}
-	
 
+	std::vector < int > v1(10e2), v2(10e2);
 	for (size_t i = 0; i < v1.size(); i++)
 	{
-		v1[i] = v2[2] = rand() % 20;
+		v1[i] = v2[2] = rand() % 100;
 	}
-	
-	{
-		Timer t;
-		std::inclusive_scan(v1.begin(), v1.end(), std::multiplies<>{});	 // inclusive_scan
-		auto a = t.time();
-		std::cout << "inclusive_scan" << "\t" << a << std::endl;
-		fout << "inclusive_scan" << "\t" << a << std::endl;
-	}
-	{
-		Timer t;
-		std::partial_sum(v2.begin(), v2.end(), v2.begin(), std::multiplies<int>()); // partial_sum
-		auto a = t.time();
-		std::cout << "partial_sum" << "\t" << a << std::endl;
-		fout << "partial_sum" << "\t" << a << std::endl;
-	}
-
 	{
 		Timer t;
 		parallel_for_each(std::begin(v1), std::end(v1), [](auto& i) { i = (i / 2); }); // parallel_for_each
@@ -159,6 +138,31 @@ int main(int argc, char** argv)
 		auto a = t.time();
 		std::cout << "sequential_for_each" << "\t" << a << std::endl;
 		fout << "sequential_for_each" << "\t" << a << std::endl;
+	}
+
+	std::vector < int > v11(10e2), v22(10e2);
+
+	for (size_t i = 0; i < v11.size(); i++)
+	{
+		v11[i] = v22[i] = rand() % 100;
+	}
+	{
+		Timer t;
+		std::cout << "inclusive sum: ";
+		std::inclusive_scan(v11.begin(), v11.end(),
+			std::ostream_iterator<int>(std::cout, " "));	 // inclusive_scan
+		auto a = t.time();
+		std::cout << "\n inclusive_scan" << "\t" << a << std::endl;
+		fout << "\n inclusive_scan" << "\t" << a << std::endl;
+	}
+	{
+		Timer t;
+		std::cout << "partial_sum: ";
+		std::partial_sum(v22.begin(), v22.end(),
+			std::ostream_iterator<int>(std::cout, " ")); // partial_sum
+		auto a = t.time();
+		std::cout << "\n partial_sum" << "\t" << a << std::endl;
+		fout << "\n partial_sum" << "\t" << a << std::endl;
 	}
 
 	system("pause");
